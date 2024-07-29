@@ -6,6 +6,10 @@ const routerApi = require('./routes')
 const app = express()
 const port = 3000
 
+// Middleware
+// let's us use json body from post, put, etc.
+app.use(express.json())
+
 // every route (product, category, etc.) has it's own module, which makes the app way more mantainable/scalable.
 routerApi(app)
 
