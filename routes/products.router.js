@@ -34,11 +34,17 @@ router.get('/filter', (req, res) => {
 router.get('/:id', (req, res) => {
   // destructure the param id.
   const { id } = req.params
-  res.json({
-    id: id,
-    name: "Air Pods",
-    price: 100
-  })
+  
+  if (id === "999") {
+    res.status(404).json({ message: "not found" })
+  } else {
+    res.json({
+      id: id,
+      name: "Air Pods",
+      price: 100
+    })
+  }
+
 })
 // -------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -46,7 +52,7 @@ router.post('/', (req, res) => {
   const product = req.body
   console.log("product: ", product);
 
-  res.json({ message: "created", data: product })
+  res.status(201).json({ message: "created", data: product })
   // save to DB + validations
 })
 
