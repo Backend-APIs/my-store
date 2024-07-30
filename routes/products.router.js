@@ -1,23 +1,15 @@
 const express = require('express')
-const { faker } = require('@faker-js/faker')
+const ProductsService = require('../services/products.service')
 
 // SRP (Single Responsability Principle) --> We created a single router for products.
 const router = express.Router()
 
+// here with the help of ProductsService, we decoupled the bussiness logic to the service, routing only delegates the access to the logic.
+const service = new ProductsService()
+
 // callback that recieves parameters of request and response.
 router.get('/', (req, res) => {
-  // javascript object notation --> Exchange data between clients and servers
-  const { size } = req.query
-  const limit = size || 10
-
-  const products = []
-  for (let index = 0; index < limit; index++) {
-    products.push({
-      name: faker.commerce.productName(),
-      price: parseInt(faker.commerce.price(), 10),
-    })
-
-  }
+  const products = service.find()
   res.json(products)
 })
 
@@ -34,17 +26,13 @@ router.get('/filter', (req, res) => {
 router.get('/:id', (req, res) => {
   // destructure the param id.
   const { id } = req.params
-  
-  if (id === "999") {
-    res.status(404).json({ message: "not found" })
-  } else {
-    res.json({
-      id: id,
-      name: "Air Pods",
-      price: 100
-    })
+  const product = service.findOne(id)
+
+  if (!product) {
+    return res.status(404).json({ message: "not found" })
   }
 
+  res.json(product)
 })
 // -------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -60,8 +48,12 @@ router.post('/', (req, res) => {
 router.put("/:id", (req, res) => {
   const product = req.body
   const { id } = req.params
-  // update to DB + validations
-  res.json({ message: "updated", data: product, id })
+  const productUpdated = service.update(product, id)
+  
+  if (!productUpdated) {
+    return res.status(404).json({message: "product not found"})
+  }
+  res.json({ message: "updated", data: productUpdated, id })
 })
 
 // On PATCH you can send some properties of an object tu update.
