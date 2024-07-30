@@ -46,8 +46,29 @@ router.post('/', (req, res) => {
   const product = req.body
   console.log("product: ", product);
 
-  res.json({message: "created", data: product})
+  res.json({ message: "created", data: product })
   // save to DB + validations
+})
+
+// On PUT you have to send ALL the properties of an object tu update.
+router.put("/:id", (req, res) => {
+  const product = req.body
+  const { id } = req.params
+  // update to DB + validations
+  res.json({ message: "updated", data: product, id })
+})
+
+// On PATCH you can send some properties of an object tu update.
+router.patch("/:id", (req, res) => {
+  const product = req.body
+  const { id } = req.params
+  // update to DB + validations
+  res.json({ message: "updated", data: product, id })
+})
+
+router.delete("/:id", (req, res) => {
+  const { id } = req.params
+  res.json({ message: "deleted", id })
 })
 
 module.exports = router
