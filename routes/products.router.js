@@ -38,7 +38,8 @@ router.get('/:id', (req, res) => {
 
 router.post('/', (req, res) => {
   const product = req.body
-  res.status(201).json({ message: "created", data: product })
+  const newProduct = service.create(product)
+  res.status(201).json(newProduct)
   // save to DB + validations
 })
 
@@ -48,23 +49,22 @@ router.put("/:id", (req, res) => {
   const { id } = req.params
   const productUpdated = service.update(product, id)
 
-  if (!productUpdated) {
-    return res.status(400).json({message: "error updating product"})
-  }
-  res.json({ message: "updated", data: productUpdated, id })
+  res.json(productUpdated)
 })
 
 // On PATCH you can send some properties of an object tu update.
 router.patch("/:id", (req, res) => {
   const product = req.body
   const { id } = req.params
-  // update to DB + validations
-  res.json({ message: "updated", data: product, id })
+  const productUpdated = service.patch(product, id)
+
+  res.json(productUpdated)
 })
 
 router.delete("/:id", (req, res) => {
   const { id } = req.params
-  res.json({ message: "deleted", id })
+  const productIdDeleted = service.delete(id)
+  res.json(productIdDeleted)
 })
 
 module.exports = router

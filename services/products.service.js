@@ -1,4 +1,4 @@
-const { faker } = require('@faker-js/faker')
+const { faker, da } = require('@faker-js/faker')
 
 class ProductsService {
 
@@ -22,8 +22,13 @@ class ProductsService {
     }
   }
 
-  create() {
-
+  create(data) {
+    const newProduct = {
+      id: faker.string.uuid(),
+      ...data
+    }
+    this.products.push(newProduct)
+    return newProduct
   }
 
   find() {
@@ -35,16 +40,37 @@ class ProductsService {
   }
 
   update(productToUpdate, id) {
-    if (!this.products.find((product) => product.id === id)) {
-      return
+    const index = this.products.findIndex(product => product.id === id)
+    if (index === -1) {
+      throw new Error('product not found')
     }
 
-    this.products = this.products.map((product) => product.id === id ? productToUpdate : product)
-    return this.products.find((product) => product.id === id)
+    this.products[index] = productToUpdate
+    return this.products[index]
   }
 
-  delete() {
+  patch(productChanges, id) {
+    const index = this.products.findIndex(product => product.id === id)
+    if (index === -1) {
+      throw new Error('product not found')
+    }
 
+    const product = this.products[index]
+    this.products[index] = {
+      ...product,
+      ...productChanges
+    }
+    return this.products[index]
+  }
+
+  delete(id) {
+    const index = this.products.findIndex(product => product.id === id)
+    if (index === -1) {
+      throw new Error('product not found')
+    }
+
+    this.products.splice(index, 1)
+    return { id }
   }
 
 }
