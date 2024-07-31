@@ -4,6 +4,11 @@ const CategoriesService = require('../services/categories.service')
 const router = express.Router()
 const service = new CategoriesService()
 
+router.post('/', (req, res) => {
+const category = service.create(req.body)
+res.status(201).json(category)
+})
+
 router.get('/', (req, res) => {
   const categories = service.find()
   res.json(categories)
@@ -20,13 +25,17 @@ router.get('/:id', (req, res) => {
   res.json(category)
 })
 
-router.put('/:id', (req, res) => {
+router.patch('/:id', (req, res) => {
   const { id } = req.params
   const category = service.update(req.body, id)
-  if (!category) {
-    return res.status(400).json({message: "error updating category"})
-  }
-  res.json({message: "updated", category: category})
+
+  res.json(category)
+})
+
+router.delete('/:id', (req, res) => {
+  const { id } = req.params
+  const categoryIdDeleted = service.delete(id)
+  res.json(categoryIdDeleted)
 })
 
 router.get('/:id/products', (req, res) => {

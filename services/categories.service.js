@@ -1,3 +1,5 @@
+const { faker } = require("@faker-js/faker")
+
 class CategoriesService {
   constructor() {
     this.categories = []
@@ -7,18 +9,28 @@ class CategoriesService {
   generate() {
     this.categories = [
       {
-        id: "1",
+        id: faker.string.uuid(),
         name: "Tecnology"
       },
       {
-        id: "2",
+        id: faker.string.uuid(),
         name: "Home"
       },
       {
-        id: "3",
+        id: faker.string.uuid(),
         name: "Travel"
       }
     ]
+  }
+
+  create(data) {
+    const category = {
+      id: faker.string.uuid(),
+      ...data
+    }
+
+    this.categories.push(category)
+    return category
   }
 
   find() {
@@ -29,17 +41,27 @@ class CategoriesService {
     return this.categories.find((category) => category.id === id)
   }
 
-  update(categoryToUpdate, id) {
-    if (!this.categories.find((category) => category.id === id)) {
-      return
+  update(categoryChanges, id) {
+    const index = this.categories.findIndex((category) => category.id === id)
+    if (index === -1) {
+      throw new Error('category not found')
     }
 
-    this.categories = this.categories.map((category) => category.id === id ? categoryToUpdate : category)
-    return this.categories.find((category) => category.id === id)
+    const category = this.categories[index]
+    this.categories[index] = {
+      ...category,
+      ...categoryChanges
+    }
+    return this.categories[index]
   }
 
   delete(id) {
-
+    const index = this.categories.findIndex((category) => category.id === id)
+    if (index === -1) {
+      throw new Error('category not found')
+    }
+    this.categories.splice(index, 1)
+    return { id }
   }
 }
 
