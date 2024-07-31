@@ -40,7 +40,6 @@ class ProductsService {
     }
 
     this.products = this.products.map((product) => product.id === id ? productToUpdate : product)
-    console.log("productsUpdated gg: ", this.products.find((product) => product.id === id));
     return this.products.find((product) => product.id === id)
   }
 

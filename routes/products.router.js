@@ -38,8 +38,6 @@ router.get('/:id', (req, res) => {
 
 router.post('/', (req, res) => {
   const product = req.body
-  console.log("product: ", product);
-
   res.status(201).json({ message: "created", data: product })
   // save to DB + validations
 })
@@ -49,9 +47,9 @@ router.put("/:id", (req, res) => {
   const product = req.body
   const { id } = req.params
   const productUpdated = service.update(product, id)
-  
+
   if (!productUpdated) {
-    return res.status(404).json({message: "product not found"})
+    return res.status(400).json({message: "error updating product"})
   }
   res.json({ message: "updated", data: productUpdated, id })
 })
