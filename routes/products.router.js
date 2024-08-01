@@ -23,16 +23,21 @@ router.get('/filter', async (req, res) => {
 })
 
 // dynamic route
-router.get('/:id', async (req, res) => {
-  // destructure the param id.
-  const { id } = req.params
-  const product = await service.findOne(id)
+router.get('/:id', async (req, res, next) => {
+  try {
+    // destructure the param id.
+    const { id } = req.params
+    const product = await service.findOne(id)
 
-  if (!product) {
-    return res.status(404).json({ message: "not found" })
+    if (!product) {
+      return res.status(404).json({ message: "not found" })
+    }
+
+    res.json(product)
+  } catch (error) {
+    next(error)
   }
 
-  res.json(product)
 })
 // -------------------------------------------------------------------------------------------------------------------------------------------------
 
