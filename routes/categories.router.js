@@ -4,41 +4,50 @@ const CategoriesService = require('../services/categories.service')
 const router = express.Router()
 const service = new CategoriesService()
 
-router.post('/', (req, res) => {
-const category = service.create(req.body)
-res.status(201).json(category)
+router.post('/', async (req, res) => {
+  const category = await service.create(req.body)
+  res.status(201).json(category)
 })
 
-router.get('/', (req, res) => {
-  const categories = service.find()
+router.get('/', async (req, res) => {
+  const categories = await service.find()
+  console.log("categories: ", categories);
   res.json(categories)
 })
 
-router.get('/:id', (req, res) => {
-  const { id } = req.params
-  const category = service.findOne(id)
+router.get('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const category = await await service.findOne(id)
 
-  if (!category) {
-    return res.status(404).json({message: "category not found"})
+    res.json(category)
+  } catch (error) {
+    next(error)
   }
-
-  res.json(category)
 })
 
-router.patch('/:id', (req, res) => {
-  const { id } = req.params
-  const category = service.update(req.body, id)
+router.patch('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const category = await service.update(req.body, id)
 
-  res.json(category)
+    res.json(category)
+  } catch (error) {
+    next(error)
+  }
 })
 
-router.delete('/:id', (req, res) => {
-  const { id } = req.params
-  const categoryIdDeleted = service.delete(id)
-  res.json(categoryIdDeleted)
+router.delete('/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const categoryIdDeleted = await service.delete(id)
+    res.json(categoryIdDeleted)
+  } catch (error) {
+    next(error)
+  }
 })
 
-router.get('/:id/products', (req, res) => {
+router.get('/:id/products', async (req, res) => {
   const { id } = req.params
 
   res.json([
@@ -58,7 +67,7 @@ router.get('/:id/products', (req, res) => {
   ])
 })
 
-router.get('/:categoryId/products/:productId', (req, res) => {
+router.get('/:categoryId/products/:productId', async (req, res) => {
   const { categoryId, productId } = req.params
   console.log(`categoryId: ${categoryId} | productId: ${productId}`);
   res.json(

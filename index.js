@@ -2,7 +2,7 @@ const express = require('express')
 
 // finds index.js automatically
 const routerApi = require('./routes')
-const { logErrors, errorHandler } = require('./middlewares/error.handler')
+const { logErrors, errorHandler, boomErrorHandler } = require('./middlewares/error.handler')
 
 const app = express()
 const port = 3000
@@ -19,6 +19,7 @@ routerApi(app)
 to client directly and won't log error in console.
 */
 app.use(logErrors)
+app.use(boomErrorHandler)
 app.use(errorHandler)
 
 app.listen(port, () => {

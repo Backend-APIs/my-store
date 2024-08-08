@@ -29,10 +29,6 @@ router.get('/:id', async (req, res, next) => {
     const { id } = req.params
     const product = await service.findOne(id)
 
-    if (!product) {
-      return res.status(404).json({ message: "not found" })
-    }
-
     res.json(product)
   } catch (error) {
     next(error)
@@ -49,7 +45,7 @@ router.post('/', async (req, res) => {
 })
 
 // On PUT you have to send ALL the properties of an object tu update.
-router.put("/:id", async (req, res) => {
+router.put("/:id", async (req, res, next) => {
   try {
     const product = req.body
     const { id } = req.params
@@ -57,14 +53,12 @@ router.put("/:id", async (req, res) => {
 
     res.json(productUpdated)
   } catch (error) {
-    res.status(404).json({
-      message: error.message
-    })
+    next(error)
   }
 })
 
 // On PATCH you can send some properties of an object tu update.
-router.patch("/:id", async (req, res) => {
+router.patch("/:id", async (req, res, next) => {
   try {
     const product = req.body
     const { id } = req.params
@@ -72,9 +66,7 @@ router.patch("/:id", async (req, res) => {
 
     res.json(productUpdated)
   } catch (error) {
-    res.status(404).json({
-      message: error.message
-    })
+    next(error)
   }
 })
 

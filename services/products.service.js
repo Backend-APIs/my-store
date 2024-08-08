@@ -1,5 +1,5 @@
 const { faker, da } = require('@faker-js/faker')
-
+const boom = require('@hapi/boom')
 class ProductsService {
 
   /* For now we're going to manage this in memory, afterwards we'll add persistence with PostgreSQL,
@@ -18,6 +18,7 @@ class ProductsService {
         id: faker.string.uuid(),
         name: faker.commerce.productName(),
         price: parseInt(faker.commerce.price(), 10),
+        isBlocked: faker.datatype.boolean(),
       })
     }
   }
@@ -43,13 +44,22 @@ class ProductsService {
   async findOne(id) {
     // for trying error handler middleware.
     // const name = this.getTotal()
-    return this.products.find((product) => product.id === id)
+    const product = this.products.find((product) => product.id === id)
+    if (!product) {
+      throw boom.notFound('product not found')
+    }
+
+    if (product.isBlocked) {
+      // we set conflict (409) error, cause it's a bussiness logic error.
+      throw boom.conflict("product is blocked")
+    }
+    return product
   }
 
   async update(productToUpdate, id) {
     const index = this.products.findIndex(product => product.id === id)
     if (index === -1) {
-      throw new Error('product not found')
+      throw boom.notFound('product not found')
     }
 
     this.products[index] = productToUpdate
@@ -59,7 +69,7 @@ class ProductsService {
   async patch(productChanges, id) {
     const index = this.products.findIndex(product => product.id === id)
     if (index === -1) {
-      throw new Error('product not found')
+      throw boom.notFound('product not found')
     }
 
     const product = this.products[index]
@@ -73,7 +83,7 @@ class ProductsService {
   async delete(id) {
     const index = this.products.findIndex(product => product.id === id)
     if (index === -1) {
-      throw new Error('product not found')
+      throw boom.notFound('product not found')
     }
 
     this.products.splice(index, 1)
