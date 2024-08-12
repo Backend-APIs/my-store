@@ -37,11 +37,15 @@ router.get('/:id', async (req, res, next) => {
 })
 // -------------------------------------------------------------------------------------------------------------------------------------------------
 
-router.post('/', async (req, res) => {
-  const product = req.body
-  const newProduct = await service.create(product)
-  res.status(201).json(newProduct)
-  // save to DB + validations
+router.post('/', async (req, res, next) => {
+  try {
+    const product = req.body
+    const newProduct = await service.create(product)
+    res.status(201).json(newProduct)
+    // save to DB + validations
+  } catch (error) {
+    next(error)
+  }
 })
 
 // On PUT you have to send ALL the properties of an object tu update.

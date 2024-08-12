@@ -4,9 +4,13 @@ const CategoriesService = require('../services/categories.service')
 const router = express.Router()
 const service = new CategoriesService()
 
-router.post('/', async (req, res) => {
-  const category = await service.create(req.body)
-  res.status(201).json(category)
+router.post('/', async (req, res, next) => {
+  try {
+    const category = await service.create(req.body)
+    res.status(201).json(category)
+  } catch (error) {
+    next(error)
+  }
 })
 
 router.get('/', async (req, res) => {

@@ -24,6 +24,10 @@ class ProductsService {
   }
 
   async create(data) {
+    if (Object.keys(data).length === 0) {
+      throw boom.badData("no product to create")
+    }
+
     const newProduct = {
       id: faker.string.uuid(),
       ...data

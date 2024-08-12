@@ -25,6 +25,9 @@ class CategoriesService {
   }
 
   async create(data) {
+    if (Object.keys(data).length === 0) {
+      throw boom.badData("no category to create")
+    }
     const category = {
       id: faker.string.uuid(),
       ...data
