@@ -12,12 +12,11 @@ const port = 3000
 // let's us use json body from post, put, etc.
 app.use(express.json())
 
-const whiteList = ["http://localhost:8080", "https://myapp.com", "https://my-store-production-1379.up.railway.app"]
+const whiteList = ["http://localhost:8080", "https://myapp.com"]
 
 const corsOptions = {
   origin: (origin, callback) => {
-    console.log("origin lpm: ", origin);
-    if (whiteList.includes(origin)) {
+    if (whiteList.includes(origin) || !origin) {
       callback(null, true)
     } else {
       callback(new Error('no permitido'))
