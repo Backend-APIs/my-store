@@ -1,4 +1,5 @@
 const express = require('express')
+const cors = require('cors')
 
 // finds index.js automatically
 const routerApi = require('./routes')
@@ -11,6 +12,19 @@ const port = 3000
 // let's us use json body from post, put, etc.
 app.use(express.json())
 
+const whiteList = ["http://localhost:8080", "https://myapp.com"]
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    if (whiteList.includes(origin)) {
+      callback(null, true)
+    } else {
+      callback(new Error('no permitido'))
+    }
+  }
+}
+
+app.use(cors(corsOptions))
 // every route (product, category, etc.) has it's own module, which makes the app way more mantainable/scalable.
 routerApi(app)
 
