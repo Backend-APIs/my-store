@@ -1,5 +1,7 @@
 const express = require('express')
 const ProductsService = require('../services/products.service')
+const validatorHandler = require('../middlewares/validator.handler')
+const { createProductSchema, updateProductSchema, getProductSchema } = require('../schemas/product.schema')
 
 // SRP (Single Responsability Principle) --> We created a single router for products.
 const router = express.Router()
@@ -23,56 +25,66 @@ router.get('/filter', async (req, res) => {
 })
 
 // dynamic route
-router.get('/:id', async (req, res, next) => {
-  try {
-    // destructure the param id.
-    const { id } = req.params
-    const product = await service.findOne(id)
+router.get('/:id',
+  validatorHandler(getProductSchema, 'params'),
+  async (req, res, next) => {
+    try {
+      // destructure the param id.
+      const { id } = req.params
+      const product = await service.findOne(id)
 
-    res.json(product)
-  } catch (error) {
-    next(error)
-  }
+      res.json(product)
+    } catch (error) {
+      next(error)
+    }
 
-})
+  })
 // -------------------------------------------------------------------------------------------------------------------------------------------------
 
-router.post('/', async (req, res, next) => {
-  try {
-    const product = req.body
-    const newProduct = await service.create(product)
-    res.status(201).json(newProduct)
-    // save to DB + validations
-  } catch (error) {
-    next(error)
-  }
-})
+router.post('/',
+  validatorHandler(createProductSchema, 'body')
+  , async (req, res, next) => {
+    try {
+      const product = req.body
+      const newProduct = await service.create(product)
+      res.status(201).json(newProduct)
+      // save to DB + validations
+    } catch (error) {
+      next(error)
+    }
+  })
 
 // On PUT you have to send ALL the properties of an object tu update.
-router.put("/:id", async (req, res, next) => {
-  try {
-    const product = req.body
-    const { id } = req.params
-    const productUpdated = await service.update(product, id)
+router.put("/:id",
+  validatorHandler(getProductSchema, 'params'),
+  validatorHandler(updateProductSchema, 'body'),
+  async (req, res, next) => {
+    try {
+      const product = req.body
+      const { id } = req.params
+      const productUpdated = await service.update(product, id)
 
-    res.json(productUpdated)
-  } catch (error) {
-    next(error)
-  }
-})
+      res.json(productUpdated)
+    } catch (error) {
+      next(error)
+    }
+  })
 
 // On PATCH you can send some properties of an object tu update.
-router.patch("/:id", async (req, res, next) => {
-  try {
-    const product = req.body
-    const { id } = req.params
-    const productUpdated = await service.patch(product, id)
+router.patch("/:id",
+  validatorHandler(getProductSchema, 'params'),
+  validatorHandler(updateProductSchema, 'body')
+  , async (req, res, next) => {
+    try {
+      const product = req.body
+      const { id } = req.params
+      const productUpdated = await service.patch(product, id)
 
-    res.json(productUpdated)
-  } catch (error) {
-    next(error)
-  }
-})
+      res.json(productUpdated)
+    } catch (error) {
+      next(error)
+    }
+  })
 
 router.delete("/:id", async (req, res) => {
   const { id } = req.params

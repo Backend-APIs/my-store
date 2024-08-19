@@ -19,6 +19,7 @@ class ProductsService {
         name: faker.commerce.productName(),
         price: parseInt(faker.commerce.price(), 10),
         isBlocked: faker.datatype.boolean(),
+        image: faker.image.url()
       })
     }
   }
