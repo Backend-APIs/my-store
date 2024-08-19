@@ -16,6 +16,7 @@ const whiteList = ["http://localhost:8080", "https://myapp.com", "https://my-sto
 
 const corsOptions = {
   origin: (origin, callback) => {
+    console.log("origin lpm: ", origin);
     if (whiteList.includes(origin)) {
       callback(null, true)
     } else {
